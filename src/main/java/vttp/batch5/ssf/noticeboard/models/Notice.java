@@ -20,7 +20,6 @@ public class Notice {
     @NotEmpty(message = "Text field cannot be empty")
     private String text;
 
-    @Future(message = "Date must be in the future, and never in the past or present")
     private Long postDate;
 
     @NotEmpty(message = "Category selection cannot be empty, at least one category must be selected")

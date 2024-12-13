@@ -2,7 +2,6 @@ package vttp.batch5.ssf.noticeboard.services;
 
 import java.util.UUID;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

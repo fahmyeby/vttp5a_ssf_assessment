@@ -33,7 +33,6 @@ public class NoticeService {
 
 	public ResponseEntity<String> postToNoticeServer(Notice notice) {
 			notice.setPostDate(new Date(System.currentTimeMillis()));
-			notice.setId(UUID.randomUUID().toString());
 			// handle categories[]
 			JsonArrayBuilder categories = Json.createArrayBuilder();
 			for (String category : notice.getCategories()) {
@@ -67,6 +66,7 @@ public class NoticeService {
 				JsonReader jsonReader = Json.createReader(new StringReader(response.getBody()));
 				JsonObject jsonObject = jsonReader.readObject();
 				String id = jsonObject.getString("id");
+				notice.setId(id);
 				Long timestamp = jsonObject.getJsonNumber("timestamp").longValue(); //not needed but if remove have error?
 
 				// save to redis 

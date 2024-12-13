@@ -13,8 +13,8 @@ import vttp.batch5.ssf.noticeboard.models.Notice;
 @Repository
 public class NoticeRepository {
 	@Autowired
-	@Qualifier("notice")
-	RedisTemplate<String, Object> template;
+	@Qualifier("notice") // ensure same as bean in app config
+	RedisTemplate<String, Object> template; //ensure same as app config
 
 	// TODO: Task 4
 	// You can change the signature of this method by adding any number of

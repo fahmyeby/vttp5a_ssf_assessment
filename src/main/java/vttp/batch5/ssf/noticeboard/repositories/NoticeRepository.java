@@ -1,10 +1,13 @@
 package vttp.batch5.ssf.noticeboard.repositories;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import jakarta.json.Json;
 import vttp.batch5.ssf.noticeboard.models.Notice;
 
 @Repository
@@ -25,8 +28,26 @@ public class NoticeRepository {
 	// redis-cli command
 	// hdel myhashmap a_key
 
-	public void insertNotices(String id, Notice notice) {
-		template.opsForValue().set(id, notice.getId());
-	}
+	// redis command to get - GET notice:id
+	public void insertNotice(String id, Notice notice) {
+		String jsonString = Json.createObjectBuilder()
+				.add("id", notice.getId())
+				.add("title", notice.getTitle())
+				.add("poster", notice.getPoster())
+				.add("postDate", notice.getPostDateAsLong())
+				.add("text", notice.getText())
+				.build()
+				.toString();
 
+		template.opsForValue().set("notice:" + id, jsonString);
+	}
+	//to get random key
+	public String getRandomKey() {
+		Set<String> keys = template.keys("notice:*");
+		if (keys != null) {
+			int randomIndex = (int) (Math.random() * keys.size());
+			return (String) keys.toArray()[randomIndex];
+		}
+		return null;
+	}
 }

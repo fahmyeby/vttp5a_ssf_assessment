@@ -12,37 +12,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.validation.Valid;
+import vttp.batch5.ssf.noticeboard.models.HealthStatus;
 import vttp.batch5.ssf.noticeboard.models.Notice;
 import vttp.batch5.ssf.noticeboard.services.NoticeService;
 
 // Use this class to write your request handlers
 @Controller
-@RequestMapping("/notice")
 public class NoticeController {
-    @Autowired private NoticeService service;
 
-    @GetMapping("")
-    public String showLandingPage( Model model){
-        Notice notice = new Notice();
-        model.addAttribute("notice", notice);
+    @Autowired
+    private NoticeService service;
+
+    @GetMapping("/notice")
+    public String showNoticeForm(Model model) {
+        model.addAttribute("notice", new Notice());
         return "notice";
     }
 
-    @PostMapping("")
-    public String postForm(@Valid @ModelAttribute Notice notice, BindingResult result, Model model){
-        if (result.hasErrors()){
-            model.addAttribute("notice", notice);
+    @PostMapping("/notice")
+    public String submitNotice(@Valid @ModelAttribute Notice notice, BindingResult binding, Model model) {
+        if (binding.hasErrors()) {
             return "notice";
         }
-        
-        ResponseEntity<String> resp = service.postToNoticeServer(notice);
-        if(resp.getStatusCode().is2xxSuccessful()){
+
+        ResponseEntity<String> response = service.postToNoticeServer(notice);
+
+        if (!response.getStatusCode().isError()) {
             model.addAttribute("id", notice.getId());
             return "view2";
         } else {
-            model.addAttribute("error", resp.getBody());
+            model.addAttribute("error", response.getBody());
             return "view3";
         }
     }
 
+    @GetMapping("/status")
+    @ResponseBody
+    public ResponseEntity<String> getHealthStatus() {
+        return service.checkHealth();
+    }
 }

@@ -6,7 +6,7 @@ public class HealthStatus {
 
     public HealthStatus(String status) {
         this.status = status;
-        this.timestamp = System.currentTimeMillis();
+        this.timestamp = System.currentTimeMillis(); //changed due to requirement as stated in paper - to get current time in long
     }
 
     public String getStatus() {

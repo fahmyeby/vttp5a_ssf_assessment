@@ -28,10 +28,8 @@ public class NoticeService {
 	@Autowired
 	private NoticeRepository noticeRepo;
 
-	@Value("${noticeboard.url}")
+	@Value("${noticeboard.url}") // set in app properties, to hide *** REMEMBER TO SET THIS VARIABLE IN RAILWAY
 	private String publisherUrl;
-
-	//private static final String publisherUrl = "https://publishing-production-d35a.up.railway.app";
 
 	public ResponseEntity<String> postToNoticeServer(Notice notice) {
 			notice.setPostDate(new Date(System.currentTimeMillis()));
@@ -41,22 +39,23 @@ public class NoticeService {
 			for (String category : notice.getCategories()) {
 				categories.add(category);
 			}
-			// to object
+			// to object conversion
 			JsonObject obj = Json.createObjectBuilder()
 					.add("title", notice.getTitle())
 					.add("poster", notice.getPoster())
-					.add("postDate", notice.getPostDateAsLong()) // Use getPostDateAsLong() instead
+					.add("postDate", notice.getPostDateAsLong()) // use getPostDateAsLong() instead
 					.add("categories", categories.build())
 					.add("text", notice.getText())
 					.build();
 
+					// make req entity - similar to day 17 slides 6 to 8***
 			RequestEntity<String> requestEntity = RequestEntity
 					.post(publisherUrl + "/notice")
 					.header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
 					.header("Accept", MediaType.APPLICATION_JSON_VALUE)
 					.body(obj.toString());
 
-			// rest api call
+			// rest api call - similar to day17 slide 5*** (this works, dont change)
 			RestTemplate restTemplate = new RestTemplate();
 			ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
 
@@ -68,22 +67,27 @@ public class NoticeService {
 				JsonReader jsonReader = Json.createReader(new StringReader(response.getBody()));
 				JsonObject jsonObject = jsonReader.readObject();
 				String id = jsonObject.getString("id");
-				Long timestamp = jsonObject.getJsonNumber("timestamp").longValue();
+				Long timestamp = jsonObject.getJsonNumber("timestamp").longValue(); //not needed but if remove have error?
 
 				// save to redis 
 				noticeRepo.insertNotice(id, notice);
 			}
 
 			return response;
-
-		
 	}
 
 	public ResponseEntity<String> checkHealth() {
 		try {
 			String key = noticeRepo.getRandomKey();
+			String status;
+			if(key !=null){
+				status = "healthy";
+			} else {
+				status = "unhealthy";
+			}
+
 			JsonObject response = Json.createObjectBuilder()
-					.add("status", key != null ? "healthy" : "unhealthy")
+					.add("status", status)
 					.add("timestamp", System.currentTimeMillis())
 					.build();
 

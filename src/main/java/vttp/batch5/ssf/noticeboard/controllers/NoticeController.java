@@ -21,7 +21,7 @@ public class NoticeController {
     @Autowired
     private NoticeService service;
 
-    @GetMapping("/notice")
+    @GetMapping("")
     public String showNoticeForm(Model model) {
         model.addAttribute("notice", new Notice());
         return "notice";

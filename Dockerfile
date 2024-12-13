@@ -35,7 +35,7 @@ ENV SERVER_PORT=8080
 EXPOSE ${SERVER_PORT}
 
 #Healthcehck
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 CMD curl -s -f <https://publishing-production-d35a.up.railway.app/status> || exit 1
+HEALTHCHECK --interval=60s --timeout=10s --start-period=120s --retries=3 CMD curl -s -f http://localhost:${SERVER_PORT}/status || exit 1
 
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "noticeboardapp.jar"]

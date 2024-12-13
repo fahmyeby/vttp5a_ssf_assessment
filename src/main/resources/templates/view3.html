@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+    <head>
+        <title>Error Page</title>
+    </head>
+    <body>
+        <h1>Cannot post notice to server</h1>
+        <h2>Error message</h2>
+        <p th:text="${error}"></p>
+        <a href="/notice">Back</a>
+    </body>
+</html>

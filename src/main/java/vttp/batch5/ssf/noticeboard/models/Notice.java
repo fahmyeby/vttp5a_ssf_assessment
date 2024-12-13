@@ -6,6 +6,7 @@ import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
@@ -22,6 +23,7 @@ public class Notice {
     private String text;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Future(message = "Date must be in future")
     private Date postDate;
 
     public Long getPostDateAsLong() {

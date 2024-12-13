@@ -1,3 +1,4 @@
+#*** Take from personal saved boilerplate
 # First Stage - Build
 FROM maven:3.9.9-eclipse-temurin-23 AS builder
 ARG COMPILE_DIR=/compiledir
@@ -24,15 +25,21 @@ WORKDIR ${WORK_DIR}
 # Copy the application jar from the build stage
 COPY --from=builder /compiledir/target/noticeboard-0.0.1-SNAPSHOT.jar noticeboardapp.jar
 
+# Install curl -- like Chuk did in class
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # Set environment variables
 ENV SERVER_PORT=8080
 
 # Expose port
 EXPOSE ${SERVER_PORT}
 
+#Healthcehck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 CMD curl -s -f <https://publishing-production-d35a.up.railway.app/status> || exit 1
+
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "noticeboardapp.jar"]
 
 # Build and run the container
-# docker build -t cihansifan/vttp5b-ssf-day17l:v0.0.1 .  
-# docker run -p 8085:8080 cihansifan/vttp5b-ssf-day17l:v0.0.1
+# docker build -t fahmyeby/noticeboardapp:v<number> . <- *** REMEMBER TO ADD <space>. 
+# docker run -p 8080:8080 fahmyeby/noticeboardapp:v<number> <- *** WITHOUT additional .
